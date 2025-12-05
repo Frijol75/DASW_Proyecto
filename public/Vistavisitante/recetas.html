@@ -11,14 +11,18 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="homeUsRegistrado.html"><i class="bi bi-book"></i> Recetástico</a>
-            <div class="collapse navbar-collapse" id="navbarNav">
+            <a class="navbar-brand fw-bold" href="home.html"><i class="bi bi-book"></i> Recetástico</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="homeUsRegistrado.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="home.html">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link active" href="recetas.html">Ver Recetas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="crear_receta.html">Crear Receta</a></li>
-                    <li class="nav-item"><a class="nav-link" href="mis_favoritos.html">Mis Favoritos</a></li>
                 </ul>
+                <div class="d-flex gap-2"></div>
+                    <a href="login.html" class="btn btn-outline-light">Iniciar Sesión</a>
+                    <a href="registro.html" class="btn btn-light">Registrarse</a>
+                </div>
             </div>
         </div>
     </nav>
@@ -171,15 +175,10 @@
         });
 
         // Carga inicial
-        document.addEventListener('DOMContentLoaded', () => {
-             const token = localStorage.getItem('token');
-             // Si no hay token, deberíamos estar en la vista de visitante, pero como estamos en VistaUsRegistrado, validamos:
-             if (!token) {
-                 // Redirigir si no está logueado
-                 window.location.href = '../Vistavisitante/login.html';
-                 return;
-             }
-             loadRecipes();
+        document.getElementById('filterForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        currentPage = 1;
+        loadRecipes(1);
         });
     </script>
 </body>
