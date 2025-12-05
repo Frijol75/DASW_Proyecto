@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Receta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container my-5">
+        <div class="card shadow p-4">
+            <h3>Editar Receta</h3>
+            <form id="editForm">
+                <input type="text" id="titulo" class="form-control mb-3" placeholder="Título" required>
+                <textarea id="desc" class="form-control mb-3" placeholder="Descripción" required></textarea>
+                
+                <div class="row mb-3">
+                    <div class="col"><input type="number" id="prep" class="form-control" placeholder="Min Prep" required></div>
+                    <div class="col"><input type="number" id="cook" class="form-control" placeholder="Min Cocción" required></div>
+                    <div class="col">
+                        <select id="cat" class="form-select">
+                            <option value="desayuno">Desayuno</option>
+                            <option value="comida">Comida</option>
+                            <option value="cena">Cena</option>
+                            <option value="mexicana">Mexicana</option>
+                            <option value="postre">Postre</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <textarea id="pasos" class="form-control mb-3" rows="5" placeholder="Pasos (uno por línea)"></textarea>
+                <input type="url" id="img" class="form-control mb-3" placeholder="URL Imagen">
+                
+                <button type="submit" class="btn btn-warning w-100">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const id = new URLSearchParams(window.location.search).get('id');
+        const token = localStorage.getItem('token');
+
+        // Cargar datos
+        fetch(`/api/recetas/${id}`).then(r => r.json()).then(data => {
+            document.getElementById('titulo').value = data.titulo;
+            document.getElementById('desc').value = data.descripcion;
+            document.getElementById('prep').value = data.tiempoPrep;
+            document.getElementById('cook').value = data.tiempoCoccion;
+            document.getElementById('cat').value = data.categoria;
+            document.getElementById('img').value = data.imageUrl;
+            document.getElementById('pasos').value = data.pasos.join('\n');
+        });
+
+        // Guardar
+        document.getElementById('editForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const body = {
+                titulo: document.getElementById('titulo').value,
+                descripcion: document.getElementById('desc').value,
+                tiempoPrep: document.getElementById('prep').value,
+                tiempoCoccion: document.getElementById('cook').value,
+                categoria: document.getElementById('cat').value,
+                imageUrl: document.getElementById('img').value,
+                pasos: document.getElementById('pasos').value.split('\n')
+            };
+
+            const res = await fetch(`/api/recetas/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+                body: JSON.stringify(body)
+            });
+
+            if(res.ok) { alert('Actualizado'); window.location.href = `detalle_receta.html?id=${id}`; }
+            else alert('Error');
+        };
+    </script>
+</body>
+</html>

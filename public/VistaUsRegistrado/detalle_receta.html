@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Receta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        /* ESTILOS DEL BOTÓN DE FAVORITOS */
+        .btn-fav-custom {
+            border: 2px solid #dc3545; color: #dc3545; background-color: white;
+            font-weight: 600; padding: 10px 20px; border-radius: 50px;
+            transition: all 0.3s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-fav-custom:hover { background-color: #fff0f1; transform: translateY(-2px); }
+        .btn-fav-custom.active { background-color: #dc3545; color: white; box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4); }
+        .recipe-img { object-fit: cover; height: 400px; width: 100%; border-radius: 15px; }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="homeUsRegistrado.html"><i class="bi bi-book"></i> Recetástico</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="homeUsRegistrado.html">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="recetas.html">Ver Recetas</a></li>
+                    <li class="nav-item"><a class="nav-link" href="mis_favoritos.html">Mis Favoritos</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <div id="loading-spinner" class="text-center py-5">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status"></div>
+            <p class="mt-2 text-muted">Cargando detalles...</p>
+        </div>
+
+        <div id="recipe-details" style="display: none;">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <a href="recetas.html" class="btn btn-outline-secondary rounded-pill px-3"><i class="bi bi-arrow-left"></i> Volver</a>
+                <!-- BOTÓN FAVORITO -->
+                <button id="btn-favorite" class="btn btn-fav-custom"><i class="bi bi-heart" id="icon-favorite"></i> <span id="text-favorite">Añadir a Favoritos</span></button>
+            </div>
+
+            <!-- Sección principal de la Receta -->
+            <div class="card shadow-sm border-0 overflow-hidden mb-4">
+                <div class="row g-0">
+                    <div class="col-md-6"><img id="receta-imagen" src="" class="recipe-img" alt="Imagen"></div>
+                    <div class="col-md-6 p-4 d-flex flex-column justify-content-center">
+                        <div>
+                            <span id="receta-categoria" class="badge bg-warning text-dark mb-2 text-uppercase">Categoría</span>
+                            <h1 id="receta-titulo" class="display-5 fw-bold mb-3">Título</h1>
+                            <p id="receta-descripcion" class="text-muted fs-5">Descripción...</p>
+                        </div>
+                        
+                        <div class="row mt-4 text-center">
+                            <div class="col-6 border-end">
+                                <i class="bi bi-clock text-primary fs-4"></i>
+                                <p class="small text-muted mb-0">Preparación</p><p id="receta-prep" class="fw-bold mb-0">-- min</p>
+                            </div>
+                            <div class="col-6">
+                                <i class="bi bi-fire text-danger fs-4"></i>
+                                <p class="small text-muted mb-0">Cocción</p><p id="receta-coccion" class="fw-bold mb-0">-- min</p>
+                            </div>
+                        </div>
+
+                        <div id="owner-actions" class="mt-4 pt-3 border-top" style="display: none;">
+                            <button id="btn-edit" class="btn btn-warning btn-sm me-2">Editar</button>
+                            <button id="btn-del" class="btn btn-danger btn-sm">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <!-- Columna Ingredientes/Pasos -->
+                <div class="col-lg-8">
+                    <!-- Ingredientes -->
+                    <div class="card shadow-sm border-0 mb-4">
+                        <div class="card-body p-4"><h3 class="text-primary mb-4">Ingredientes</h3><ul id="lista-ingredientes" class="list-group list-group-flush"></ul></div>
+                    </div>
+                    <!-- Pasos -->
+                    <div class="card shadow-sm border-0">
+                        <div class="card-body p-4"><h3 class="text-primary mb-4">Instrucciones</h3><div id="lista-pasos"></div></div>
+                    </div>
+
+                    <!-- SECCIÓN DE COMENTARIOS -->
+                    <div class="card shadow-sm border-0 mt-4">
+                        <div class="card-header bg-secondary text-white">
+                            <h4 class="mb-0"><i class="bi bi-chat-dots me-2"></i>Comentarios</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <div id="comment-form-container">
+                                <h5 class="mb-3">Deja tu opinión</h5>
+                                <form id="comment-form" class="mb-4">
+                                    <textarea id="comment-text" class="form-control mb-2" rows="3" placeholder="Escribe tu comentario aquí..." required></textarea>
+                                    <button type="submit" class="btn btn-primary">Publicar Comentario</button>
+                                </form>
+                            </div>
+
+                            <div id="comments-list" class="mt-4"></div>
+                            <div id="no-comments-msg" class="text-muted text-center py-4" style="display:none;">Aún no hay comentarios. ¡Sé el primero!</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Columna Autor -->
+                <div class="col-lg-4">
+                    <div class="card shadow-sm border-0 bg-white">
+                        <div class="card-body text-center p-4">
+                            <h5 class="text-muted mb-1">Creado por</h5><h3 id="receta-autor" class="fw-bold text-dark">Usuario</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const recipeId = params.get('id');
+        const token = localStorage.getItem('token');
+        
+        // Elementos DOM para Favoritos
+        const btnFavorite = document.getElementById('btn-favorite');
+        const iconFavorite = document.getElementById('icon-favorite');
+        const textFavorite = document.getElementById('text-favorite');
+
+        // Elementos DOM para Comentarios
+        const commentsList = document.getElementById('comments-list');
+        const commentForm = document.getElementById('comment-form');
+        const commentTextarea = document.getElementById('comment-text');
+
+
+        // --- LÓGICA DE COMENTARIOS ---
+
+        function renderComment(comment) {
+            const date = new Date(comment.createdAt).toLocaleDateString();
+            
+            const div = document.createElement('div');
+            div.className = 'd-flex mb-3 pb-3 border-bottom';
+            div.innerHTML = `
+                <div class="flex-grow-1">
+                    <h6 class="mb-1 fw-bold">${comment.username || 'Usuario'} 
+                        <small class="text-muted fw-normal float-end">${date}</small>
+                    </h6>
+                    <p class="mb-0">${comment.text}</p>
+                </div>
+            `;
+            // Añadimos el comentario al principio (más nuevo primero)
+            commentsList.prepend(div);
+            document.getElementById('no-comments-msg').style.display = 'none';
+        }
+
+
+        // --- LÓGICA DE FAVORITOS ---
+
+        async function checkIfFavorite() {
+            if (!token) return; // No checar si no hay token
+            try {
+                const res = await fetch('/api/users/favorites', { headers: { 'x-auth-token': token } });
+                const favoritos = await res.json();
+                // Verificamos si el ID de la receta actual está en la lista de favoritos del usuario
+                const isFav = favoritos.some(fav => (fav._id === recipeId) || (fav === recipeId));
+                updateBtnVisuals(isFav);
+            } catch (e) {
+                console.error("Error al checar favoritos:", e);
+                // Si falla, lo mostramos como no marcado por defecto
+                updateBtnVisuals(false); 
+            }
+        }
+
+        function updateBtnVisuals(isFav) {
+            if (isFav) {
+                btnFavorite.classList.add('active');
+                iconFavorite.classList.replace('bi-heart', 'bi-heart-fill');
+                textFavorite.textContent = 'Guardado';
+            } else {
+                btnFavorite.classList.remove('active');
+                iconFavorite.classList.replace('bi-heart-fill', 'bi-heart');
+                textFavorite.textContent = 'Añadir a Favoritos';
+            }
+        }
+
+        // --- FUNCIÓN PRINCIPAL DE INICIO ---
+
+        async function init() {
+            if (!recipeId) {
+                document.getElementById('loading-spinner').style.display = 'none';
+                return alert('ID de receta no encontrado.');
+            } 
+
+            try {
+                const res = await fetch(`/api/recetas/${recipeId}`);
+                if (!res.ok) throw new Error();
+                const receta = await res.json();
+
+                // 1. LLENAR DATOS DE DETALLE
+                document.getElementById('receta-titulo').textContent = receta.titulo;
+                document.getElementById('receta-descripcion').textContent = receta.descripcion;
+                document.getElementById('receta-categoria').textContent = receta.categoria;
+                document.getElementById('receta-prep').textContent = `${receta.tiempoPrep} min`;
+                document.getElementById('receta-coccion').textContent = `${receta.tiempoCoccion} min`;
+                document.getElementById('receta-autor').textContent = receta.autor ? receta.autor.nombre : 'Anónimo';
+                document.getElementById('receta-imagen').src = receta.imageUrl || 'https://via.placeholder.com/800';
+                
+                // Llenar listas (Ingredientes/Pasos)
+                document.getElementById('lista-ingredientes').innerHTML = receta.ingredientes.map(ing => 
+                    `<li class="list-group-item"><strong>${ing.cantidad} ${ing.unidad}</strong> ${ing.nombre}</li>`).join('');
+                document.getElementById('lista-pasos').innerHTML = receta.pasos.map((p, i) => 
+                    `<p class="mb-3"><strong class="text-primary">${i+1}.</strong> ${p}</p>`).join('');
+
+
+                // 2. Lógica de USUARIO (Protección, Favoritos y Comentarios)
+                if (token) {
+                    // A. FAVORITOS: Checar estado inicial
+                    checkIfFavorite(); 
+                    
+                    // B. EDICIÓN / ELIMINACIÓN
+                    const payload = JSON.parse(atob(token.split('.')[1]));
+                    if (receta.autor._id === payload.user.id || payload.user.role === 'admin') {
+                        document.getElementById('owner-actions').style.display = 'block';
+
+                        document.getElementById('btn-del').onclick = async () => {
+                            if(confirm('¿Eliminar?')) { await fetch(`/api/recetas/${recipeId}`, { method: 'DELETE', headers: {'x-auth-token': token}}); window.location.href = 'recetas.html'; }
+                        };
+                        document.getElementById('btn-edit').onclick = () => window.location.href = `editar_receta.html?id=${recipeId}`;
+                    }
+
+                    // C. COMENTARIOS: Evento de envío
+                    commentForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        const text = commentTextarea.value.trim();
+
+                        if (!text) return alert('Escribe algo.');
+
+                        try {
+                            const response = await fetch(`/api/recetas/${recipeId}/comments`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+                                body: JSON.stringify({ text })
+                            });
+                            if (response.ok) {
+                                const newComment = await response.json();
+                                renderComment(newComment);
+                                commentTextarea.value = '';
+                            } else {
+                                const error = await response.json();
+                                alert(`Error al comentar: ${error.msg}`);
+                            }
+                        } catch (e) { alert('Error de conexión al enviar comentario.'); }
+                    });
+
+                } else {
+                    // Ocultar formulario de comentarios si no está logueado
+                    document.getElementById('comment-form-container').innerHTML = `
+                        <div class="alert alert-info text-center">
+                            <i class="bi bi-lock-fill"></i> <a href="../Vistavisitante/login.html" class="alert-link">Inicia sesión</a> para dejar un comentario.
+                        </div>
+                    `;
+                }
+                
+                // 3. Renderizar comentarios existentes
+                if (receta.comments && receta.comments.length > 0) {
+                    receta.comments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    receta.comments.forEach(renderComment);
+                } else {
+                    document.getElementById('no-comments-msg').style.display = 'block';
+                }
+
+
+                // 4. FINAL: Ocultar spinner y mostrar contenido
+                document.getElementById('loading-spinner').style.display = 'none';
+                document.getElementById('recipe-details').style.display = 'block';
+
+            } catch (e) { 
+                console.error(e);
+                document.getElementById('loading-spinner').innerHTML = `<div class="alert alert-danger">No se pudo cargar la receta.</div>`;
+            }
+        }
+        
+        // Evento de clic en el botón de favoritos
+        btnFavorite.onclick = async () => {
+            if (!token) return alert('Inicia sesión');
+            const isCurrentlyFav = btnFavorite.classList.contains('active');
+            updateBtnVisuals(!isCurrentlyFav); // Cambio optimista
+            
+            try { 
+                await fetch(`/api/users/favorites/${recipeId}`, { method: 'POST', headers: {'x-auth-token': token} }); 
+            } catch (e) { 
+                updateBtnVisuals(isCurrentlyFav); // Revertir si falla
+                alert("Error de red al guardar favorito.");
+            }
+        };
+
+
+        init(); // Arrancar la aplicación
+    </script>
+</body>
+</html>

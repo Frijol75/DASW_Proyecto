@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="d-flex">
+        <div class="bg-dark text-white p-3" style="min-height:100vh; width:250px;">
+            <h4>Admin 🛠️</h4>
+            <hr>
+            <button onclick="ver('users')" class="btn btn-outline-light w-100 mb-2">Usuarios</button>
+            <button onclick="ver('recipes')" class="btn btn-outline-light w-100 mb-2">Recetas</button>
+            <button onclick="logout()" class="btn btn-danger w-100 mt-4">Salir</button>
+        </div>
+        <div class="p-4 w-100">
+            <div id="users-view">
+                <h2>Usuarios</h2>
+                <table class="table table-striped"><thead class="table-dark"><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Acción</th></tr></thead><tbody id="user-table"></tbody></table>
+            </div>
+            <div id="recipes-view" style="display:none;">
+                <h2>Recetas</h2>
+                <table class="table table-striped"><thead class="table-success"><tr><th>Título</th><th>Autor</th><th>Acción</th></tr></thead><tbody id="recipe-table"></tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if(!token) window.location.href = '../Vistavisitante/login.html';
+
+        function logout() { localStorage.clear(); window.location.href = '../Vistavisitante/login.html'; }
+        function ver(view) {
+            document.getElementById('users-view').style.display = view === 'users' ? 'block' : 'none';
+            document.getElementById('recipes-view').style.display = view === 'recipes' ? 'block' : 'none';
+        }
+
+        async function load() {
+            // Usuarios
+            const resU = await fetch('/api/users', { headers: {'x-auth-token': token}});
+            const users = await resU.json();
+            document.getElementById('user-table').innerHTML = users.map(u => `
+                <tr><td>${u.nombre}</td><td>${u.email}</td><td>${u.role}</td>
+                <td><button class="btn btn-sm btn-danger" onclick="delUser('${u._id}')">Borrar</button></td></tr>`).join('');
+
+            // Recetas
+            const resR = await fetch('/api/recetas?limit=100');
+            const dataR = await resR.json();
+            document.getElementById('recipe-table').innerHTML = dataR.recetas.map(r => `
+                <tr><td>${r.titulo}</td><td>${r.autor?.nombre || 'N/A'}</td>
+                <td><button class="btn btn-sm btn-danger" onclick="delRecipe('${r._id}')">Borrar</button></td></tr>`).join('');
+        }
+
+        async function delUser(id) { if(confirm('¿Borrar?')) { await fetch(`/api/users/${id}`, {method:'DELETE', headers:{'x-auth-token':token}}); load(); }}
+        async function delRecipe(id) { if(confirm('¿Borrar?')) { await fetch(`/api/recetas/${id}`, {method:'DELETE', headers:{'x-auth-token':token}}); load(); }}
+
+        load();
+    </script>
+</body>
+</html>

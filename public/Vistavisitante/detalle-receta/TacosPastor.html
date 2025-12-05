@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recetario - Tacos al Pastor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="../home.html">
+                <i class="bi bi-book"></i> Recetástico
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../home.html">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../recetas.html">Ver Recetas</a>
+                    </li>
+                </ul>
+                <div class="d-flex gap-2">
+                    <a href="../login.html" class="btn btn-outline-light">Iniciar Sesión</a>
+                    <a href="../registro.html" class="btn btn-light">Registrarse</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <!-- Botón volver -->
+        <a href="../recetas.html" class="btn btn-outline-primary mb-4">
+            <i class="bi bi-arrow-left"></i> Volver a Recetas
+        </a>
+
+        <!-- Encabezado de la Receta -->
+        <div class="row mb-4">
+            <div class="col-lg-6">
+                <img src="https://milrecetas.net/wp-content/uploads/2016/09/Tacos-al-pastor-2.jpg" class="img-fluid rounded shadow" alt="Tacos al Pastor">
+            </div>
+            <div class="col-lg-6">
+                <span class="badge bg-success mb-2">Comida</span>
+                <h1 class="mb-3">Tacos al Pastor</h1>
+                <div class="mb-3">
+                    <i class="bi bi-star-fill text-warning fs-5"></i>
+                    <i class="bi bi-star-fill text-warning fs-5"></i>
+                    <i class="bi bi-star-fill text-warning fs-5"></i>
+                    <i class="bi bi-star-fill text-warning fs-5"></i>
+                    <i class="bi bi-star-half text-warning fs-5"></i>
+                    <span class="ms-2 fs-5 fw-bold">4.5</span>
+                    <span class="text-muted ms-2">(24 calificaciones)</span>
+                </div>
+                <p class="lead">Deliciosos tacos mexicanos con carne de cerdo marinada en especias tradicionales, acompañados de piña asada, cebolla y cilantro fresco. Un clásico de la cocina callejera mexicana.</p>
+                
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <i class="bi bi-clock fs-3 text-primary"></i>
+                                <h6 class="mt-2 mb-1">Preparación</h6>
+                                <p class="mb-0 fw-bold">30 minutos</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card bg-light">
+                            <div class="card-body text-center">
+                                <i class="bi bi-fire fs-3 text-danger"></i>
+                                <h6 class="mt-2 mb-1">Cocción</h6>
+                                <p class="mb-0 fw-bold">45 minutos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Ingredientes -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="bi bi-basket"></i> Ingredientes</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Para la carne:</h6>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>1 kg</strong> - Carne de cerdo (lomo o pierna)</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>3 cdas</strong> - Chile guajillo en polvo</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>2 cdas</strong> - Achiote en pasta</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>4 dientes</strong> - Ajo</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>1/2 taza</strong> - Jugo de naranja</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>1/4 taza</strong> - Vinagre blanco</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-muted">Para servir:</h6>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>12 piezas</strong> - Tortillas de maíz</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>1 pieza</strong> - Piña fresca</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>1 manojo</strong> - Cilantro fresco</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>2 piezas</strong> - Cebolla blanca</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>2 piezas</strong> - Limones</li>
+                                    <li class="mb-2"><i class="bi bi-check-circle text-success"></i> <strong>Al gusto</strong> - Salsa verde o roja</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pasos -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="bi bi-list-ol"></i> Instrucciones</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h5 class="text-primary">Paso 1: Preparar la marinada</h5>
+                            <p>En una licuadora, mezcla el chile guajillo, achiote, ajo, jugo de naranja, vinagre, sal y pimienta hasta obtener una pasta homogénea. Esta marinada le dará el sabor característico a la carne.</p>
+                        </div>
+                        <div class="mb-4">
+                            <h5 class="text-primary">Paso 2: Marinar la carne</h5>
+                            <p>Corta la carne en tiras delgadas y cúbrela completamente con la marinada. Deja reposar en el refrigerador por al menos 4 horas o toda la noche para mejores resultados.</p>
+                        </div>
+                        <div class="mb-4">
+                            <h5 class="text-primary">Paso 3: Cocinar</h5>
+                            <p>En un comal o sartén muy caliente, cocina la carne marinada hasta que esté bien dorada y ligeramente crujiente en los bordes. Esto tomará aproximadamente 6-8 minutos por lado.</p>
+                        </div>
+                        <div class="mb-4">
+                            <h5 class="text-primary">Paso 4: Asar la piña</h5>
+                            <p>Corta la piña en rodajas y ásalas en el mismo comal hasta que estén caramelizadas. Luego córtalas en cubos pequeños.</p>
+                        </div>
+                        <div class="mb-4">
+                            <h5 class="text-primary">Paso 5: Armar los tacos</h5>
+                            <p>Calienta las tortillas, coloca la carne, agrega piña, cebolla picada y cilantro. Sirve con limón y tu salsa favorita. ¡Disfruta!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comentarios -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="bi bi-chat-dots"></i> Comentarios (3)</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Comentario 1 -->
+                        <div class="d-flex mb-3 pb-3 border-bottom">
+                            <div class="flex-shrink-0">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <span class="fs-5">JM</span>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">Juan Martínez <small class="text-muted">- Hace 2 días</small></h6>
+                                <div class="mb-1">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                </div>
+                                <p class="mb-0">¡Excelente receta! Los tacos quedaron deliciosos. La marinada es perfecta.</p>
+                            </div>
+                        </div>
+
+                        <!-- Comentario 2 -->
+                        <div class="d-flex mb-3 pb-3 border-bottom">
+                            <div class="flex-shrink-0">
+                                <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <span class="fs-5">AL</span>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">Ana López <small class="text-muted">- Hace 5 días</small></h6>
+                                <div class="mb-1">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star text-warning"></i>
+                                </div>
+                                <p class="mb-0">Muy buenos tacos, aunque le agregué más chile porque me gusta picante.</p>
+                            </div>
+                        </div>
+
+                        <!-- Comentario 3 -->
+                        <div class="d-flex mb-3">
+                            <div class="flex-shrink-0">
+                                <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                    <span class="fs-5">CR</span>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1">Carlos Ramírez <small class="text-muted">- Hace 1 semana</small></h6>
+                                <div class="mb-1">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-half text-warning"></i>
+                                </div>
+                                <p class="mb-0">Perfectos para una reunión familiar. A todos les encantaron.</p>
+                            </div>
+                        </div>
+
+                        <!-- Mensaje para visitantes -->
+                        <div class="alert alert-warning mt-4" role="alert">
+                            <i class="bi bi-lock"></i> <strong>Inicia sesión para calificar o dejar un comentario</strong>
+                            <div class="mt-2">
+                                <a href="../login.html" class="btn btn-sm btn-primary">Iniciar Sesión</a>
+                                <a href="../registro.html" class="btn btn-sm btn-outline-primary">Registrarse</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Información Nutricional -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-heart-pulse"></i> Información Nutricional</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-3">Por porción (3 tacos)</p>
+                        <ul class="list-unstyled">
+                            <li class="d-flex justify-content-between mb-2">
+                                <span>Calorías:</span>
+                                <strong>450 kcal</strong>
+                            </li>
+                            <li class="d-flex justify-content-between mb-2">
+                                <span>Proteínas:</span>
+                                <strong>32 g</strong>
+                            </li>
+                            <li class="d-flex justify-content-between mb-2">
+                                <span>Carbohidratos:</span>
+                                <strong>42 g</strong>
+                            </li>
+                            <li class="d-flex justify-content-between mb-2">
+                                <span>Grasas:</span>
+                                <strong>15 g</strong>
+                            </li>
+                            <li class="d-flex justify-content-between mb-2">
+                                <span>Fibra:</span>
+                                <strong>6 g</strong>
+                            </li>
+                            <li class="d-flex justify-content-between mb-2">
+                                <span>Sodio:</span>
+                                <strong>580 mg</strong>
+                            </li>
+                        </ul>
+                        <p class="small text-muted mb-0"><i class="bi bi-info-circle"></i> Valores aproximados obtenidos de base de datos nutricional.</p>
+                    </div>
+                </div>
+
+                <!-- Recetas Relacionadas -->
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-bookmark"></i> Recetas Similares</h5>
+                    </div>
+                    <div class="card-body p-2">
+                        <a href="#" class="text-decoration-none text-dark">
+                            <div class="d-flex mb-3 p-2 border-bottom">
+                                <img src="https://barefeetinthekitchen.com/wp-content/uploads/2020/06/quesadillas-7.jpg" class="rounded me-2" alt="Quesadillas" style="width: 80px; height: 60px; object-fit: cover;">
+                                <div>
+                                    <h6 class="mb-1">Quesadillas de Queso</h6>
+                                    <small class="text-warning">★★★★☆ 4.3</small>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="#" class="text-decoration-none text-dark">
+                            <div class="d-flex mb-3 p-2 border-bottom">
+                                <img src="https://i.pinimg.com/originals/f8/f0/e6/f8f0e69ce5995453dc598e8809dff105.jpg" class="rounded me-2" alt="Enchiladas" style="width: 80px; height: 60px; object-fit: cover;">
+                                <div>
+                                    <h6 class="mb-1">Enchiladas Verdes</h6>
+                                    <small class="text-warning">★★★★★ 4.8</small>
+                                </div>
+                            </div>
+                        </a>
+                        <a href="#" class="text-decoration-none text-dark">
+                            <div class="d-flex p-2">
+                                <img src="https://www.cocinafacil.lat/_astro/burritos-de-carne.w4b9rDnX_Z1JNsgL.webp" class="rounded me-2" alt="Burritos" style="width: 80px; height: 60px; object-fit: cover;">
+                                <div>
+                                    <h6 class="mb-1">Burritos de Carne</h6>
+                                    <small class="text-warning">★★★★☆ 4.5</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white mt-5 py-4">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 Recetario. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
