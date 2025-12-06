@@ -1,0 +1,765 @@
+{
+	"info": {
+		"_postman_id": "recetastico-api-collection",
+		"name": "🍳 Recetástico API",
+		"description": "Colección completa de endpoints para la API de Recetástico - Sistema de gestión de recetas.\n\n## Autenticación\nLa API usa JWT (JSON Web Tokens). Después de hacer login, copia el token y agrégalo en la variable `{{token}}`.\n\n## Variables de entorno\n- `base_url`: http://localhost:3000\n- `token`: Tu JWT token después de login\n\n## Flujo típico\n1. Registrar usuario\n2. Login para obtener token\n3. Usar token en endpoints protegidos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🔐 Autenticación",
+			"description": "Endpoints de registro, login y gestión de sesión",
+			"item": [
+				{
+					"name": "Registrar Usuario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Juan Pérez\",\n    \"email\": \"juan@ejemplo.com\",\n    \"password\": \"mipassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/registro",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "registro"]
+						},
+						"description": "Registra un nuevo usuario en el sistema.\n\n**Campos requeridos:**\n- `nombre`: Nombre completo del usuario\n- `email`: Correo electrónico único\n- `password`: Contraseña (mínimo 8 caracteres)"
+					},
+					"response": [
+						{
+							"name": "Registro exitoso",
+							"status": "Created",
+							"code": 201,
+							"body": "{\n    \"message\": \"Usuario registrado exitosamente\",\n    \"user\": {\n        \"id\": \"64abc123def456\",\n        \"nombre\": \"Juan Pérez\",\n        \"email\": \"juan@ejemplo.com\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Guardar token automáticamente",
+									"var jsonData = pm.response.json();",
+									"if (jsonData.token) {",
+									"    pm.collectionVariables.set('token', jsonData.token);",
+									"    console.log('Token guardado exitosamente');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"juan@ejemplo.com\",\n    \"password\": \"mipassword123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Inicia sesión y obtiene un JWT token.\n\n**Nota:** El token se guarda automáticamente en la variable `{{token}}` después de una respuesta exitosa."
+					},
+					"response": [
+						{
+							"name": "Login exitoso",
+							"status": "OK",
+							"code": 200,
+							"body": "{\n    \"message\": \"Login exitoso\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\",\n    \"user\": {\n        \"id\": \"64abc123def456\",\n        \"nombre\": \"Juan Pérez\",\n        \"email\": \"juan@ejemplo.com\",\n        \"rol\": \"usuario\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Verificar Token",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/verificar",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "verificar"]
+						},
+						"description": "Verifica si el token actual es válido y obtiene información del usuario."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "👤 Usuarios",
+			"description": "Gestión de perfil y usuarios",
+			"item": [
+				{
+					"name": "Obtener Mi Perfil",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/perfil",
+							"host": ["{{base_url}}"],
+							"path": ["api", "usuarios", "perfil"]
+						},
+						"description": "Obtiene el perfil del usuario autenticado."
+					},
+					"response": [
+						{
+							"name": "Perfil obtenido",
+							"status": "OK",
+							"code": 200,
+							"body": "{\n    \"_id\": \"64abc123def456\",\n    \"nombre\": \"Juan Pérez\",\n    \"email\": \"juan@ejemplo.com\",\n    \"rol\": \"usuario\",\n    \"createdAt\": \"2024-01-15T10:30:00.000Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Actualizar Mi Perfil",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Juan Carlos Pérez\",\n    \"passwordActual\": \"mipassword123\",\n    \"passwordNueva\": \"nuevapassword456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/perfil",
+							"host": ["{{base_url}}"],
+							"path": ["api", "usuarios", "perfil"]
+						},
+						"description": "Actualiza el nombre y/o contraseña del usuario.\n\n**Campos opcionales:**\n- `nombre`: Nuevo nombre\n- `passwordActual`: Requerido si cambia contraseña\n- `passwordNueva`: Nueva contraseña"
+					},
+					"response": []
+				},
+				{
+					"name": "[Admin] Listar Todos los Usuarios",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios",
+							"host": ["{{base_url}}"],
+							"path": ["api", "usuarios"]
+						},
+						"description": "🔒 **Solo Admin**\n\nLista todos los usuarios registrados en el sistema."
+					},
+					"response": []
+				},
+				{
+					"name": "[Admin] Eliminar Usuario",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "usuarios", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "USER_ID_AQUI"
+								}
+							]
+						},
+						"description": "🔒 **Solo Admin**\n\nElimina un usuario del sistema por su ID."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🍽️ Recetas",
+			"description": "CRUD completo de recetas",
+			"item": [
+				{
+					"name": "Listar Recetas (Público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recetas?page=1&limit=9",
+							"host": ["{{base_url}}"],
+							"path": ["api", "recetas"],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Número de página"
+								},
+								{
+									"key": "limit",
+									"value": "9",
+									"description": "Recetas por página"
+								},
+								{
+									"key": "titulo",
+									"value": "tacos",
+									"description": "Filtrar por título",
+									"disabled": true
+								},
+								{
+									"key": "categoria",
+									"value": "mexicana",
+									"description": "Filtrar por categoría",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Lista todas las recetas con paginación y filtros opcionales.\n\n**Parámetros de query:**\n- `page`: Página actual (default: 1)\n- `limit`: Recetas por página (default: 9)\n- `titulo`: Buscar por título\n- `categoria`: Filtrar por categoría"
+					},
+					"response": [
+						{
+							"name": "Lista de recetas",
+							"status": "OK",
+							"code": 200,
+							"body": "{\n    \"recetas\": [\n        {\n            \"_id\": \"64abc123\",\n            \"titulo\": \"Tacos al Pastor\",\n            \"descripcion\": \"Deliciosos tacos tradicionales...\",\n            \"categoria\": \"mexicana\",\n            \"imageUrl\": \"https://...\",\n            \"autor\": {\n                \"_id\": \"64user123\",\n                \"nombre\": \"Chef Mario\"\n            }\n        }\n    ],\n    \"currentPage\": 1,\n    \"totalPages\": 5,\n    \"totalRecetas\": 42\n}"
+						}
+					]
+				},
+				{
+					"name": "Obtener Receta por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/recetas/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "recetas", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "RECETA_ID_AQUI"
+								}
+							]
+						},
+						"description": "Obtiene el detalle completo de una receta específica."
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Receta",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Enchiladas Verdes\",\n    \"descripcion\": \"Deliciosas enchiladas bañadas en salsa verde con pollo desmenuzado, crema y queso.\",\n    \"categoria\": \"mexicana\",\n    \"tiempoPreparacion\": 45,\n    \"porciones\": 4,\n    \"dificultad\": \"media\",\n    \"ingredientes\": [\n        \"12 tortillas de maíz\",\n        \"500g de pechuga de pollo\",\n        \"500ml de salsa verde\",\n        \"200ml de crema\",\n        \"200g de queso fresco\",\n        \"1/2 cebolla\",\n        \"Aceite para freír\"\n    ],\n    \"instrucciones\": [\n        \"Cocer el pollo en agua con sal y desmenuzar\",\n        \"Freír ligeramente las tortillas\",\n        \"Rellenar con pollo y enrollar\",\n        \"Bañar con salsa verde caliente\",\n        \"Agregar crema y queso\",\n        \"Servir con cebolla en rodajas\"\n    ],\n    \"imageUrl\": \"https://ejemplo.com/enchiladas.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/recetas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "recetas"]
+						},
+						"description": "🔒 **Requiere autenticación**\n\nCrea una nueva receta.\n\n**Campos requeridos:**\n- `titulo`: Nombre de la receta\n- `descripcion`: Descripción breve\n- `categoria`: desayuno, comida, cena, postre, entrada, mexicana, pasta, vegetariana\n- `ingredientes`: Array de strings\n- `instrucciones`: Array de pasos\n\n**Campos opcionales:**\n- `tiempoPreparacion`: En minutos\n- `porciones`: Número de porciones\n- `dificultad`: facil, media, dificil\n- `imageUrl`: URL de imagen"
+					},
+					"response": [
+						{
+							"name": "Receta creada",
+							"status": "Created",
+							"code": 201,
+							"body": "{\n    \"message\": \"Receta creada exitosamente\",\n    \"receta\": {\n        \"_id\": \"64newreceta123\",\n        \"titulo\": \"Enchiladas Verdes\",\n        \"autor\": \"64user123\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Actualizar Receta",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Enchiladas Verdes Especiales\",\n    \"descripcion\": \"Receta mejorada con ingredientes premium\",\n    \"tiempoPreparacion\": 50\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/recetas/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "recetas", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "RECETA_ID_AQUI"
+								}
+							]
+						},
+						"description": "🔒 **Requiere autenticación**\n\nActualiza una receta existente. Solo el autor o admin pueden modificarla."
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Receta",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/recetas/:id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "recetas", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "RECETA_ID_AQUI"
+								}
+							]
+						},
+						"description": "🔒 **Requiere autenticación**\n\nElimina una receta. Solo el autor o admin pueden eliminarla."
+					},
+					"response": []
+				},
+				{
+					"name": "Mis Recetas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/recetas/mis-recetas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "recetas", "mis-recetas"]
+						},
+						"description": "🔒 **Requiere autenticación**\n\nObtiene todas las recetas creadas por el usuario autenticado."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "❤️ Favoritos",
+			"description": "Gestión de recetas favoritas",
+			"item": [
+				{
+					"name": "Obtener Mis Favoritos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/favoritos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "favoritos"]
+						},
+						"description": "🔒 **Requiere autenticación**\n\nObtiene la lista de recetas favoritas del usuario."
+					},
+					"response": [
+						{
+							"name": "Lista de favoritos",
+							"status": "OK",
+							"code": 200,
+							"body": "{\n    \"favoritos\": [\n        {\n            \"_id\": \"64fav123\",\n            \"receta\": {\n                \"_id\": \"64rec123\",\n                \"titulo\": \"Tacos al Pastor\",\n                \"imageUrl\": \"https://...\"\n            },\n            \"fechaAgregado\": \"2024-01-20T15:30:00.000Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Agregar a Favoritos",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"recetaId\": \"RECETA_ID_AQUI\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/favoritos",
+							"host": ["{{base_url}}"],
+							"path": ["api", "favoritos"]
+						},
+						"description": "🔒 **Requiere autenticación**\n\nAgrega una receta a la lista de favoritos."
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar de Favoritos",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/favoritos/:recetaId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "favoritos", ":recetaId"],
+							"variable": [
+								{
+									"key": "recetaId",
+									"value": "RECETA_ID_AQUI"
+								}
+							]
+						},
+						"description": "🔒 **Requiere autenticación**\n\nElimina una receta de la lista de favoritos."
+					},
+					"response": []
+				},
+				{
+					"name": "Verificar si es Favorito",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/favoritos/check/:recetaId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "favoritos", "check", ":recetaId"],
+							"variable": [
+								{
+									"key": "recetaId",
+									"value": "RECETA_ID_AQUI"
+								}
+							]
+						},
+						"description": "🔒 **Requiere autenticación**\n\nVerifica si una receta específica está en favoritos."
+					},
+					"response": [
+						{
+							"name": "Es favorito",
+							"status": "OK",
+							"code": 200,
+							"body": "{\n    \"esFavorito\": true\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "💬 Comentarios",
+			"description": "Sistema de comentarios en recetas",
+			"item": [
+				{
+					"name": "Obtener Comentarios de Receta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/comentarios/:recetaId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "comentarios", ":recetaId"],
+							"variable": [
+								{
+									"key": "recetaId",
+									"value": "RECETA_ID_AQUI"
+								}
+							]
+						},
+						"description": "Obtiene todos los comentarios de una receta específica."
+					},
+					"response": [
+						{
+							"name": "Lista de comentarios",
+							"status": "OK",
+							"code": 200,
+							"body": "{\n    \"comentarios\": [\n        {\n            \"_id\": \"64com123\",\n            \"texto\": \"¡Excelente receta! La preparé y quedó deliciosa.\",\n            \"autor\": {\n                \"_id\": \"64user456\",\n                \"nombre\": \"María García\"\n            },\n            \"calificacion\": 5,\n            \"createdAt\": \"2024-01-22T18:45:00.000Z\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Agregar Comentario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"texto\": \"¡Excelente receta! La preparé para mi familia y les encantó.\",\n    \"calificacion\": 5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/comentarios/:recetaId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "comentarios", ":recetaId"],
+							"variable": [
+								{
+									"key": "recetaId",
+									"value": "RECETA_ID_AQUI"
+								}
+							]
+						},
+						"description": "🔒 **Requiere autenticación**\n\nAgrega un comentario a una receta.\n\n**Campos:**\n- `texto`: Contenido del comentario (requerido)\n- `calificacion`: Número del 1 al 5 (opcional)"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Comentario",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/comentarios/:comentarioId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "comentarios", ":comentarioId"],
+							"variable": [
+								{
+									"key": "comentarioId",
+									"value": "COMENTARIO_ID_AQUI"
+								}
+							]
+						},
+						"description": "🔒 **Requiere autenticación**\n\nElimina un comentario. Solo el autor o admin pueden eliminarlo."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "⭐ Calificaciones",
+			"description": "Sistema de rating de recetas",
+			"item": [
+				{
+					"name": "Calificar Receta",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"calificacion\": 5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/calificaciones/:recetaId",
+							"host": ["{{base_url}}"],
+							"path": ["api", "calificaciones", ":recetaId"],
+							"variable": [
+								{
+									"key": "recetaId",
+									"value": "RECETA_ID_AQUI"
+								}
+							]
+						},
+						"description": "🔒 **Requiere autenticación**\n\nCalifica una receta del 1 al 5. Si ya existe una calificación previa, se actualiza."
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Promedio de Receta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/calificaciones/:recetaId/promedio",
+							"host": ["{{base_url}}"],
+							"path": ["api", "calificaciones", ":recetaId", "promedio"],
+							"variable": [
+								{
+									"key": "recetaId",
+									"value": "RECETA_ID_AQUI"
+								}
+							]
+						},
+						"description": "Obtiene el promedio de calificaciones de una receta."
+					},
+					"response": [
+						{
+							"name": "Promedio",
+							"status": "OK",
+							"code": 200,
+							"body": "{\n    \"promedio\": 4.5,\n    \"totalCalificaciones\": 23\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "🛡️ Admin",
+			"description": "Endpoints exclusivos para administradores",
+			"item": [
+				{
+					"name": "[Admin] Dashboard Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/stats",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "stats"]
+						},
+						"description": "🔒 **Solo Admin**\n\nObtiene estadísticas generales del sistema."
+					},
+					"response": [
+						{
+							"name": "Estadísticas",
+							"status": "OK",
+							"code": 200,
+							"body": "{\n    \"totalUsuarios\": 150,\n    \"totalRecetas\": 423,\n    \"totalComentarios\": 1250,\n    \"usuariosNuevosHoy\": 5,\n    \"recetasNuevasHoy\": 12\n}"
+						}
+					]
+				},
+				{
+					"name": "[Admin] Listar Todas las Recetas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/recetas",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "recetas"]
+						},
+						"description": "🔒 **Solo Admin**\n\nLista todas las recetas con información completa para gestión."
+					},
+					"response": []
+				},
+				{
+					"name": "[Admin] Cambiar Rol de Usuario",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rol\": \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/usuarios/:id/rol",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "usuarios", ":id", "rol"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "USER_ID_AQUI"
+								}
+							]
+						},
+						"description": "🔒 **Solo Admin**\n\nCambia el rol de un usuario (usuario/admin)."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

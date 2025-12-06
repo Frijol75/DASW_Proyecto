@@ -1,0 +1,1133 @@
+openapi: 3.0.3
+info:
+  title: 🍳 Recetástico API
+  description: |
+    API REST completa para el sistema de gestión de recetas **Recetástico**.
+    
+    ## Características
+    - 🔐 Autenticación con JWT
+    - 👤 Gestión de usuarios y perfiles
+    - 🍽️ CRUD completo de recetas
+    - ❤️ Sistema de favoritos
+    - 💬 Comentarios en recetas
+    - ⭐ Calificaciones y ratings
+    - 🛡️ Panel de administración
+    
+    ## Autenticación
+    La mayoría de los endpoints requieren autenticación mediante JWT.
+    
+    1. Obtén tu token en `/api/auth/login`
+    2. Incluye el header: `Authorization: Bearer <tu_token>`
+    
+    ## Roles de Usuario
+    - **visitante**: Solo lectura de recetas públicas
+    - **usuario**: Crear recetas, comentar, agregar favoritos
+    - **admin**: Gestión completa del sistema
+    
+  version: 1.0.0
+  contact:
+    name: Equipo Recetástico
+    email: soporte@recetastico.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor de desarrollo
+  - url: https://api.recetastico.com
+    description: Servidor de producción
+
+tags:
+  - name: Autenticación
+    description: Registro, login y gestión de sesiones
+  - name: Usuarios
+    description: Gestión de perfiles de usuario
+  - name: Recetas
+    description: CRUD de recetas
+  - name: Favoritos
+    description: Gestión de recetas favoritas
+  - name: Comentarios
+    description: Sistema de comentarios
+  - name: Calificaciones
+    description: Sistema de rating
+  - name: Admin
+    description: Endpoints administrativos
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Token JWT obtenido del endpoint de login
+
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "64abc123def456789"
+        nombre:
+          type: string
+          example: "Juan Pérez"
+        email:
+          type: string
+          format: email
+          example: "juan@ejemplo.com"
+        rol:
+          type: string
+          enum: [usuario, admin]
+          example: "usuario"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2024-01-15T10:30:00.000Z"
+
+    UsuarioRegistro:
+      type: object
+      required:
+        - nombre
+        - email
+        - password
+      properties:
+        nombre:
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Juan Pérez"
+        email:
+          type: string
+          format: email
+          example: "juan@ejemplo.com"
+        password:
+          type: string
+          minLength: 8
+          example: "mipassword123"
+
+    Login:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: "juan@ejemplo.com"
+        password:
+          type: string
+          example: "mipassword123"
+
+    LoginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Login exitoso"
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        user:
+          $ref: '#/components/schemas/Usuario'
+
+    Receta:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "64rec123def456789"
+        titulo:
+          type: string
+          example: "Tacos al Pastor"
+        descripcion:
+          type: string
+          example: "Deliciosos tacos tradicionales mexicanos con carne marinada"
+        categoria:
+          type: string
+          enum: [desayuno, comida, cena, postre, entrada, mexicana, pasta, vegetariana]
+          example: "mexicana"
+        ingredientes:
+          type: array
+          items:
+            type: string
+          example: ["500g carne de cerdo", "3 chiles guajillo", "1 piña"]
+        instrucciones:
+          type: array
+          items:
+            type: string
+          example: ["Marinar la carne", "Asar en trompo", "Servir en tortillas"]
+        tiempoPreparacion:
+          type: integer
+          description: Tiempo en minutos
+          example: 60
+        porciones:
+          type: integer
+          example: 4
+        dificultad:
+          type: string
+          enum: [facil, media, dificil]
+          example: "media"
+        imageUrl:
+          type: string
+          format: uri
+          example: "https://ejemplo.com/tacos.jpg"
+        autor:
+          $ref: '#/components/schemas/Usuario'
+        promedioCalificacion:
+          type: number
+          format: float
+          example: 4.5
+        totalCalificaciones:
+          type: integer
+          example: 23
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    RecetaCrear:
+      type: object
+      required:
+        - titulo
+        - descripcion
+        - categoria
+        - ingredientes
+        - instrucciones
+      properties:
+        titulo:
+          type: string
+          minLength: 3
+          maxLength: 100
+          example: "Enchiladas Verdes"
+        descripcion:
+          type: string
+          minLength: 10
+          maxLength: 500
+          example: "Deliciosas enchiladas bañadas en salsa verde"
+        categoria:
+          type: string
+          enum: [desayuno, comida, cena, postre, entrada, mexicana, pasta, vegetariana]
+          example: "mexicana"
+        ingredientes:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          example: ["12 tortillas", "500g pollo", "500ml salsa verde"]
+        instrucciones:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          example: ["Cocer el pollo", "Freír tortillas", "Rellenar y enrollar"]
+        tiempoPreparacion:
+          type: integer
+          minimum: 1
+          example: 45
+        porciones:
+          type: integer
+          minimum: 1
+          example: 4
+        dificultad:
+          type: string
+          enum: [facil, media, dificil]
+          example: "media"
+        imageUrl:
+          type: string
+          format: uri
+          example: "https://ejemplo.com/enchiladas.jpg"
+
+    RecetasPaginadas:
+      type: object
+      properties:
+        recetas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Receta'
+        currentPage:
+          type: integer
+          example: 1
+        totalPages:
+          type: integer
+          example: 5
+        totalRecetas:
+          type: integer
+          example: 42
+
+    Comentario:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "64com123def456789"
+        texto:
+          type: string
+          example: "¡Excelente receta! Quedó deliciosa."
+        autor:
+          $ref: '#/components/schemas/Usuario'
+        receta:
+          type: string
+          example: "64rec123def456789"
+        calificacion:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 5
+        createdAt:
+          type: string
+          format: date-time
+
+    ComentarioCrear:
+      type: object
+      required:
+        - texto
+      properties:
+        texto:
+          type: string
+          minLength: 1
+          maxLength: 500
+          example: "¡Me encantó esta receta!"
+        calificacion:
+          type: integer
+          minimum: 1
+          maximum: 5
+          example: 5
+
+    Favorito:
+      type: object
+      properties:
+        _id:
+          type: string
+        receta:
+          $ref: '#/components/schemas/Receta'
+        usuario:
+          type: string
+        fechaAgregado:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Error de validación"
+        error:
+          type: string
+          example: "El campo 'titulo' es requerido"
+
+    AdminStats:
+      type: object
+      properties:
+        totalUsuarios:
+          type: integer
+          example: 150
+        totalRecetas:
+          type: integer
+          example: 423
+        totalComentarios:
+          type: integer
+          example: 1250
+        usuariosNuevosHoy:
+          type: integer
+          example: 5
+        recetasNuevasHoy:
+          type: integer
+          example: 12
+
+  responses:
+    UnauthorizedError:
+      description: Token no proporcionado o inválido
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: "No autorizado"
+            error: "Token inválido o expirado"
+    
+    ForbiddenError:
+      description: No tiene permisos para esta acción
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: "Acceso denegado"
+            error: "Se requieren permisos de administrador"
+    
+    NotFoundError:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            message: "No encontrado"
+            error: "La receta solicitada no existe"
+
+paths:
+  # ==================== AUTENTICACIÓN ====================
+  /api/auth/registro:
+    post:
+      tags:
+        - Autenticación
+      summary: Registrar nuevo usuario
+      description: Crea una nueva cuenta de usuario en el sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioRegistro'
+      responses:
+        '201':
+          description: Usuario registrado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Usuario registrado exitosamente"
+                  user:
+                    $ref: '#/components/schemas/Usuario'
+        '400':
+          description: Datos inválidos o email ya registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/login:
+    post:
+      tags:
+        - Autenticación
+      summary: Iniciar sesión
+      description: Autentica un usuario y devuelve un token JWT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/verificar:
+    get:
+      tags:
+        - Autenticación
+      summary: Verificar token
+      description: Verifica si el token actual es válido
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Token válido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  valid:
+                    type: boolean
+                    example: true
+                  user:
+                    $ref: '#/components/schemas/Usuario'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ==================== USUARIOS ====================
+  /api/usuarios/perfil:
+    get:
+      tags:
+        - Usuarios
+      summary: Obtener mi perfil
+      description: Obtiene el perfil del usuario autenticado
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Perfil obtenido exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    put:
+      tags:
+        - Usuarios
+      summary: Actualizar mi perfil
+      description: Actualiza el nombre y/o contraseña del usuario
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                  example: "Juan Carlos Pérez"
+                passwordActual:
+                  type: string
+                  description: Requerido si se cambia la contraseña
+                passwordNueva:
+                  type: string
+                  minLength: 8
+      responses:
+        '200':
+          description: Perfil actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Perfil actualizado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/usuarios:
+    get:
+      tags:
+        - Usuarios
+      summary: Listar todos los usuarios (Admin)
+      description: Lista todos los usuarios registrados. Solo administradores.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Usuario'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /api/usuarios/{id}:
+    delete:
+      tags:
+        - Usuarios
+      summary: Eliminar usuario (Admin)
+      description: Elimina un usuario del sistema. Solo administradores.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID del usuario a eliminar
+      responses:
+        '200':
+          description: Usuario eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Usuario eliminado correctamente"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  # ==================== RECETAS ====================
+  /api/recetas:
+    get:
+      tags:
+        - Recetas
+      summary: Listar recetas
+      description: Lista todas las recetas con paginación y filtros opcionales
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Número de página
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 9
+          description: Recetas por página
+        - name: titulo
+          in: query
+          schema:
+            type: string
+          description: Filtrar por título (búsqueda parcial)
+        - name: categoria
+          in: query
+          schema:
+            type: string
+            enum: [desayuno, comida, cena, postre, entrada, mexicana, pasta, vegetariana]
+          description: Filtrar por categoría
+      responses:
+        '200':
+          description: Lista de recetas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecetasPaginadas'
+
+    post:
+      tags:
+        - Recetas
+      summary: Crear receta
+      description: Crea una nueva receta. Requiere autenticación.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecetaCrear'
+      responses:
+        '201':
+          description: Receta creada exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Receta creada exitosamente"
+                  receta:
+                    $ref: '#/components/schemas/Receta'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/recetas/{id}:
+    get:
+      tags:
+        - Recetas
+      summary: Obtener receta por ID
+      description: Obtiene el detalle completo de una receta
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID de la receta
+      responses:
+        '200':
+          description: Detalle de la receta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receta'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    put:
+      tags:
+        - Recetas
+      summary: Actualizar receta
+      description: Actualiza una receta existente. Solo el autor o admin.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecetaCrear'
+      responses:
+        '200':
+          description: Receta actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receta'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    delete:
+      tags:
+        - Recetas
+      summary: Eliminar receta
+      description: Elimina una receta. Solo el autor o admin.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Receta eliminada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Receta eliminada correctamente"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/recetas/mis-recetas:
+    get:
+      tags:
+        - Recetas
+      summary: Mis recetas
+      description: Obtiene las recetas creadas por el usuario autenticado
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de recetas del usuario
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Receta'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ==================== FAVORITOS ====================
+  /api/favoritos:
+    get:
+      tags:
+        - Favoritos
+      summary: Obtener mis favoritos
+      description: Lista las recetas favoritas del usuario
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de favoritos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  favoritos:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Favorito'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      tags:
+        - Favoritos
+      summary: Agregar a favoritos
+      description: Agrega una receta a la lista de favoritos
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - recetaId
+              properties:
+                recetaId:
+                  type: string
+                  example: "64rec123def456789"
+      responses:
+        '201':
+          description: Agregado a favoritos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Receta agregada a favoritos"
+        '400':
+          description: Ya está en favoritos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /api/favoritos/{recetaId}:
+    delete:
+      tags:
+        - Favoritos
+      summary: Eliminar de favoritos
+      description: Elimina una receta de la lista de favoritos
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: recetaId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Eliminado de favoritos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Receta eliminada de favoritos"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/favoritos/check/{recetaId}:
+    get:
+      tags:
+        - Favoritos
+      summary: Verificar si es favorito
+      description: Verifica si una receta está en la lista de favoritos
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: recetaId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Estado del favorito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  esFavorito:
+                    type: boolean
+                    example: true
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ==================== COMENTARIOS ====================
+  /api/comentarios/{recetaId}:
+    get:
+      tags:
+        - Comentarios
+      summary: Obtener comentarios de receta
+      description: Lista todos los comentarios de una receta
+      parameters:
+        - name: recetaId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de comentarios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comentarios:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Comentario'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    post:
+      tags:
+        - Comentarios
+      summary: Agregar comentario
+      description: Agrega un comentario a una receta
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: recetaId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComentarioCrear'
+      responses:
+        '201':
+          description: Comentario agregado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comentario'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/comentarios/{comentarioId}:
+    delete:
+      tags:
+        - Comentarios
+      summary: Eliminar comentario
+      description: Elimina un comentario. Solo el autor o admin.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: comentarioId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Comentario eliminado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Comentario eliminado"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  # ==================== CALIFICACIONES ====================
+  /api/calificaciones/{recetaId}:
+    post:
+      tags:
+        - Calificaciones
+      summary: Calificar receta
+      description: Califica una receta del 1 al 5. Actualiza si ya existe.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: recetaId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - calificacion
+              properties:
+                calificacion:
+                  type: integer
+                  minimum: 1
+                  maximum: 5
+                  example: 5
+      responses:
+        '200':
+          description: Calificación registrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Calificación registrada"
+                  calificacion:
+                    type: integer
+                    example: 5
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /api/calificaciones/{recetaId}/promedio:
+    get:
+      tags:
+        - Calificaciones
+      summary: Obtener promedio de calificaciones
+      description: Obtiene el promedio de calificaciones de una receta
+      parameters:
+        - name: recetaId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Promedio de calificaciones
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  promedio:
+                    type: number
+                    format: float
+                    example: 4.5
+                  totalCalificaciones:
+                    type: integer
+                    example: 23
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  # ==================== ADMIN ====================
+  /api/admin/stats:
+    get:
+      tags:
+        - Admin
+      summary: Estadísticas del dashboard
+      description: Obtiene estadísticas generales. Solo admin.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Estadísticas del sistema
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminStats'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /api/admin/recetas:
+    get:
+      tags:
+        - Admin
+      summary: Listar todas las recetas (Admin)
+      description: Lista todas las recetas para gestión. Solo admin.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista completa de recetas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Receta'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /api/admin/usuarios/{id}/rol:
+    put:
+      tags:
+        - Admin
+      summary: Cambiar rol de usuario
+      description: Cambia el rol de un usuario. Solo admin.
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - rol
+              properties:
+                rol:
+                  type: string
+                  enum: [usuario, admin]
+                  example: "admin"
+      responses:
+        '200':
+          description: Rol actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Rol actualizado correctamente"
+                  user:
+                    $ref: '#/components/schemas/Usuario'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
